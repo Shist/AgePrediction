@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Age Prediction</string>
+    <string name="title_home">Home</string>
+    <string name="title_favorites">Favorites</string>
+    <string name="text_empty">Enter a name for age prediction</string>
+    <string name="text_no_result">No age guesses found for this name, try another</string>
+    <string name="text_search">Search</string>
+    <string name="text_add_to_favorites">Add to favorites</string>
+    <string name="text_error_name_empty">You entered an empty name</string>
+    <string name="text_error_name_with_small_letter">The name cannot start with a small letter</string>
+    <string name="text_error_name_contains_not_letters">Name can only contain letters</string>
+    <string name="text_no_favorites">No any featured names yet</string>
+    <string name="text_delete">Delete</string>
+    <string name="text_loading_name">Loading name…</string>
+    <string name="label_share_with">Share with:</string>
+    <string name="text_share_with">The name prediction application in response to the name %1$s suggested the age of %2$s</string>
+    <string name="title_delete_name">Delete name?</string>
+    <string name="text_delete_name">Are you sure you want to remove the selected name from your favorites?</string>
+    <string name="text_yes">Yes</string>
+    <string name="text_no">No</string>
+</resources>
