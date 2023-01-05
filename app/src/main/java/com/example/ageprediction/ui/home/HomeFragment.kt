@@ -8,8 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.example.ageprediction.Consts
 import com.example.ageprediction.R
 import com.example.ageprediction.databinding.FragmentHomeBinding
@@ -32,11 +30,12 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
-
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.searchLine.isActivated = true
         binding.searchLine.queryHint = resources.getString(R.string.text_search)
@@ -76,21 +75,11 @@ class HomeFragment : Fragment() {
                                 .replace(R.id.home_fragment_container, HomeNoResultFragment(Consts.NameErrorType.CONTAINS_NOT_LETTERS))
                                 .commit()
                         } else {
-                            homeViewModel.getAge(queryString)
-                            val ageObserver = Observer<String> { newAge ->
-                                if (newAge == "null") {
-                                    childFragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.home_fragment_container, HomeNoResultFragment(Consts.NameErrorType.NO_RESULT))
-                                        .commit()
-                                } else {
-                                    childFragmentManager
-                                        .beginTransaction()
-                                        .replace(R.id.home_fragment_container, HomeSuccessFragment(queryString, newAge))
-                                        .commit()
-                                }
-                            }
-                            homeViewModel.currAge.observe(viewLifecycleOwner, ageObserver)
+                            childFragmentManager
+                                .beginTransaction()
+                                .replace(R.id.home_fragment_container, HomeSuccessFragment(queryString)
+                                )
+                                .commit()
                         }
                     }
                 }
@@ -107,8 +96,6 @@ class HomeFragment : Fragment() {
             .beginTransaction()
             .replace(R.id.home_fragment_container, HomeEmptyFragment())
             .commit()
-
-        return root
     }
 
     override fun onDestroyView() {

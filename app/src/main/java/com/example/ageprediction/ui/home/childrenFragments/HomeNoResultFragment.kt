@@ -36,9 +36,6 @@ class HomeNoResultFragment(private val errorType: Consts.NameErrorType) : Fragme
             Consts.NameErrorType.CONTAINS_NOT_LETTERS -> {
                 binding.textNoResult.text = resources.getString(R.string.text_error_name_contains_not_letters)
             }
-            Consts.NameErrorType.NO_RESULT -> {
-                binding.textNoResult.text = resources.getString(R.string.text_no_result)
-            }
         }
 
         return root

@@ -3,7 +3,7 @@
     <string name="title_home">Главная</string>
     <string name="title_favorites">Избранное</string>
     <string name="text_empty">Введите имя для предсказания возраста</string>
-    <string name="text_no_result">По данному имени не найдено предположений возраста, попробуйте другое</string>
+    <string name="text_no_result">Нет данных</string>
     <string name="text_search">Поиск</string>
     <string name="text_add_to_favorites">Добавить в избранное</string>
     <string name="text_error_name_empty">Вы ввели пустое имя</string>
@@ -14,8 +14,8 @@
     <string name="text_loading_name">Загрузка имени…</string>
     <string name="label_share_with">Поделиться с:</string>
     <string name="text_share_with">Приложение предсказаний имён в ответ на имя %1$s предложило возраст %2$s</string>
-    <string name="title_delete_name">Удалить имя?</string>
-    <string name="text_delete_name">Вы уверены что хотите удалить выбранное имя из избранных?</string>
+    <string name="title_delete_name">Удалить выбранные имена?</string>
+    <string name="text_delete_name">Вы уверены, что хотите удалить выбранные имена из избранных?</string>
     <string name="text_yes">Да</string>
     <string name="text_no">Нет</string>
 </resources>

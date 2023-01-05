@@ -2,20 +2,26 @@ package com.example.ageprediction.ui.favorites.childrenFragments
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ageprediction.Consts
 import com.example.ageprediction.R
 import com.example.ageprediction.databinding.FragmentFavoritesListBinding
 import com.example.ageprediction.ui.favorites.childrenFragments.adapter.NameItem
 import com.example.ageprediction.ui.favorites.childrenFragments.adapter.NamesAdapter
+import kotlinx.coroutines.launch
+import org.koin.core.component.inject
+import org.koin.core.component.KoinComponent
 
-class FavoritesListFragment(private val listOfNames : MutableList<NameItem>,
-                            private val setEmptyFragmentFun: ()-> Unit) : Fragment()  {
+class FavoritesListFragment : Fragment(), KoinComponent  {
 
     private var _binding: FragmentFavoritesListBinding? = null
 
@@ -23,63 +29,80 @@ class FavoritesListFragment(private val listOfNames : MutableList<NameItem>,
     // onDestroyView.
     private val binding get() = _binding!!
 
+    private val viewModel: FavouriteItemViewModel by inject()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentFavoritesListBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        return binding.root
+    }
 
-        val recyclerView = binding.recyclerView
-        recyclerView.layoutManager = LinearLayoutManager(context)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val adapter = NamesAdapter({ showButton() }, { hideButton() })
-        recyclerView.adapter = adapter
-        adapter.submitList(listOfNames)
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.favItemsFlow.collect { favItems ->
+                    if (favItems != null) { // <-- That value can be null if there are some problems at DB
+                        if (favItems.isNotEmpty()) {
+                            binding.textEmptyList.visibility = View.GONE
 
-        binding.btnDelete.setOnClickListener {
-            AlertDialog.Builder(context).apply {
-                setTitle(getString(R.string.title_delete_name))
-                setMessage(getString(R.string.text_delete_name))
-                setPositiveButton(getString(R.string.text_yes)) { _, _ ->
-                    val namesItems = adapter.currentList
-                    val newListNamesItems = mutableListOf<NameItem>()
+                            val recyclerView = binding.recyclerView
+                            recyclerView.layoutManager = LinearLayoutManager(context)
 
-                    var stringForPreferences = ""
-                    var splitterIsNeeded = false
-                    for (item in namesItems) {
-                        if (!item.checkBoxState) {
-                            newListNamesItems.add(item)
+                            val adapter = NamesAdapter({ showButton() }, { hideButton() })
+                            recyclerView.adapter = adapter
 
-                            if (splitterIsNeeded) {
-                                stringForPreferences += Consts.FAVORITE_NAMES_PREFERENCES_SPLITTER
+                            val mutableListNamesItems = mutableListOf<NameItem>()
+                            for (favItem in favItems) {
+                                mutableListNamesItems.add(NameItem(favItem.name, false))
                             }
-                            stringForPreferences += item.textName
-                            splitterIsNeeded = true
+
+                            adapter.submitList(mutableListNamesItems)
+
+                            binding.btnDelete.setOnClickListener {
+                                AlertDialog.Builder(context).apply {
+                                    setTitle(getString(R.string.title_delete_name))
+                                    setMessage(getString(R.string.text_delete_name))
+                                    setPositiveButton(getString(R.string.text_yes)) { _, _ ->
+                                        val namesItems = adapter.currentList
+                                        val newListNamesItems = mutableListOf<NameItem>()
+                                        val itemsToBeDeleted = mutableListOf<String>()
+
+                                        for (item in namesItems) {
+                                            if (item.checkBoxState) {
+                                                itemsToBeDeleted.add(item.textName)
+                                            } else {
+                                                newListNamesItems.add(item)
+                                            }
+                                        }
+
+                                        viewModel.deleteFavItemsFromDB(itemsToBeDeleted)
+
+                                        if (newListNamesItems.isEmpty()) {
+                                            binding.textEmptyList.visibility = View.VISIBLE
+                                        } else {
+                                            binding.textEmptyList.visibility = View.GONE
+                                        }
+
+                                        adapter.submitList(newListNamesItems)
+                                        adapter.currentAmountOfCheckedBoxes = 0
+                                        hideButton()
+                                    }
+                                    setNegativeButton(getString(R.string.text_no)) { _, _ -> }
+                                    create()
+                                }.show()
+                            }
+                        } else {
+                            binding.textEmptyList.visibility = View.VISIBLE
                         }
                     }
-
-                    val favNamesPrefs = context?.getSharedPreferences(Consts.FAVORITE_NAMES_PREFERENCES, Context.MODE_PRIVATE)
-                    val favNamesEditor = favNamesPrefs?.edit()
-                    favNamesEditor?.putString(Consts.FAVORITE_NAMES_PREFERENCES_WHOLE_STRING, stringForPreferences)
-                    favNamesEditor?.apply()
-
-                    if (newListNamesItems.isEmpty()) {
-                        setEmptyFragmentFun()
-                    } else {
-                        adapter.submitList(newListNamesItems)
-                        adapter.currentAmountOfCheckedBoxes = 0
-                        hideButton()
-                    }
                 }
-                setNegativeButton(getString(R.string.text_no)) { _, _ -> }
-                create()
-            }.show()
+            }
         }
-
-        return root
     }
 
     override fun onDestroyView() {

@@ -6,11 +6,6 @@ object Consts {
     enum class NameErrorType {
         EMPTY,
         SMALL_LETTER,
-        CONTAINS_NOT_LETTERS,
-        NO_RESULT
+        CONTAINS_NOT_LETTERS
     }
-
-    const val FAVORITE_NAMES_PREFERENCES = "FAVORITE_NAMES"
-    const val FAVORITE_NAMES_PREFERENCES_WHOLE_STRING = "FAVORITE_NAMES_WHOLE_STRING"
-    const val FAVORITE_NAMES_PREFERENCES_SPLITTER = "||||"
 }
