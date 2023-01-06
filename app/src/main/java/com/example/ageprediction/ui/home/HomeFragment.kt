@@ -143,6 +143,7 @@ class HomeFragment : Fragment() {
                 }
                 val selection = cursor.getString(index)
                 binding.searchLine.setQuery(selection, true)
+                cursor.close()
                 return true
             }
 
