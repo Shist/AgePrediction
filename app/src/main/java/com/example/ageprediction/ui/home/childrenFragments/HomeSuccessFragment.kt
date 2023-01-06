@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.ageprediction.Consts
 import com.example.ageprediction.R
 import com.example.ageprediction.databinding.FragmentHomeSuccessBinding
 import kotlinx.coroutines.launch
@@ -16,7 +17,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 
-class HomeSuccessFragment(private val currName: String) : Fragment(), KoinComponent  {
+class HomeSuccessFragment : Fragment(), KoinComponent  {
 
     private var _binding: FragmentHomeSuccessBinding? = null
 
@@ -24,7 +25,10 @@ class HomeSuccessFragment(private val currName: String) : Fragment(), KoinCompon
     // onDestroyView.
     private val binding get() = _binding!!
 
+    private var currName = ""
+
     private val viewModel: SearchItemViewModel by inject {
+        currName = arguments?.getString(Consts.KEY_QUERY_NAME).toString()
         parametersOf(currName)
     }
 

@@ -8,4 +8,8 @@ object Consts {
         SMALL_LETTER,
         CONTAINS_NOT_LETTERS
     }
+
+    const val KEY_QUERY_NAME = "queryName"
+
+    const val KEY_ERROR_TYPE = "errorType"
 }

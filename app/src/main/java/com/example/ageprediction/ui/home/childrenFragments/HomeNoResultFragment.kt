@@ -9,7 +9,7 @@ import com.example.ageprediction.Consts
 import com.example.ageprediction.R
 import com.example.ageprediction.databinding.FragmentHomeNoResultBinding
 
-class HomeNoResultFragment(private val errorType: Consts.NameErrorType) : Fragment()  {
+class HomeNoResultFragment : Fragment()  {
 
     private var _binding: FragmentHomeNoResultBinding? = null
 
@@ -26,7 +26,7 @@ class HomeNoResultFragment(private val errorType: Consts.NameErrorType) : Fragme
         _binding = FragmentHomeNoResultBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        when(errorType) {
+        when(arguments?.getSerializable(Consts.KEY_ERROR_TYPE)) {
             Consts.NameErrorType.EMPTY -> {
                 binding.textNoResult.text = resources.getString(R.string.text_error_name_empty)
             }

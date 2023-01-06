@@ -58,27 +58,46 @@ class HomeFragment : Fragment() {
                 val queryString = binding.searchLine.query.toString()
 
                 if (queryString.isEmpty()) {
+                    val fragment = HomeNoResultFragment().apply {
+                        arguments = Bundle().apply {
+                            putSerializable(Consts.KEY_ERROR_TYPE, Consts.NameErrorType.EMPTY)
+                        }
+                    }
                     childFragmentManager
                         .beginTransaction()
-                        .replace(R.id.home_fragment_container, HomeNoResultFragment(Consts.NameErrorType.EMPTY))
+                        .replace(R.id.home_fragment_container, fragment)
                         .commit()
                 } else {
                     if (!queryString[0].isUpperCase()) {
+                        val fragment = HomeNoResultFragment().apply {
+                            arguments = Bundle().apply {
+                                putSerializable(Consts.KEY_ERROR_TYPE, Consts.NameErrorType.SMALL_LETTER)
+                            }
+                        }
                         childFragmentManager
                             .beginTransaction()
-                            .replace(R.id.home_fragment_container, HomeNoResultFragment(Consts.NameErrorType.SMALL_LETTER))
+                            .replace(R.id.home_fragment_container, fragment)
                             .commit()
                     } else {
                         if (!queryString.onlyLetters()) {
+                            val fragment = HomeNoResultFragment().apply {
+                                arguments = Bundle().apply {
+                                    putSerializable(Consts.KEY_ERROR_TYPE, Consts.NameErrorType.CONTAINS_NOT_LETTERS)
+                                }
+                            }
                             childFragmentManager
                                 .beginTransaction()
-                                .replace(R.id.home_fragment_container, HomeNoResultFragment(Consts.NameErrorType.CONTAINS_NOT_LETTERS))
+                                .replace(R.id.home_fragment_container, fragment)
                                 .commit()
                         } else {
+                            val fragment = HomeSuccessFragment().apply {
+                                arguments = Bundle().apply {
+                                    putString(Consts.KEY_QUERY_NAME, query)
+                                }
+                            }
                             childFragmentManager
                                 .beginTransaction()
-                                .replace(R.id.home_fragment_container, HomeSuccessFragment(queryString)
-                                )
+                                .replace(R.id.home_fragment_container, fragment)
                                 .commit()
                         }
                     }
