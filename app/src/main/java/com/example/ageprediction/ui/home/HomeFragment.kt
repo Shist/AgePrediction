@@ -40,6 +40,8 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    private lateinit var adapter: SearchHistoryAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -57,7 +59,7 @@ class HomeFragment : Fragment() {
             isIconifiedByDefault = false // Do not iconify the widget; expand it by default
         }
 
-        val adapter = SearchHistoryAdapter(requireContext(), null, true)
+        adapter = SearchHistoryAdapter(requireContext(), null, true)
         binding.searchLine.suggestionsAdapter = adapter
 
         binding.searchLine.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -116,15 +118,12 @@ class HomeFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                val cursor = requireContext().contentResolver.query(
-                    Uri.parse("content://${SearchSuggestionProvider.AUTHORITY}/suggestions"),
-                    null,
-                    bundleOf(
-                        "query" to newText
-                    ),
-                    null,
-                )
-                adapter.changeCursor(cursor)
+                if (newText.isNullOrEmpty()) {
+                    adapter.changeCursor(null)
+                    return false
+                }
+                binding.searchLine.handler.removeCallbacks(searchRunnable)
+                binding.searchLine.handler.postDelayed(searchRunnable, 300L)
                 return false
             }
         })
@@ -137,7 +136,7 @@ class HomeFragment : Fragment() {
 
             override fun onSuggestionClick(position: Int): Boolean {
                 val cursor = adapter.getItem(position) as Cursor
-                val index = cursor.getColumnIndex("display1")
+                val index = cursor.getColumnIndex("query")
                 if (index < 0) {
                     return false
                 }
@@ -153,6 +152,20 @@ class HomeFragment : Fragment() {
             .beginTransaction()
             .replace(R.id.home_fragment_container, HomeEmptyFragment())
             .commit()
+    }
+
+    private val searchRunnable = Runnable {
+        val newText = binding.searchLine.query
+        val cursor = requireContext().contentResolver.query(
+            Uri.parse("content://${SearchSuggestionProvider.AUTHORITY}/suggestions"),
+            null,
+            bundleOf(
+                "query" to newText
+            ),
+            null,
+        )
+
+        adapter.changeCursor(cursor)
     }
 
     override fun onDestroyView() {
