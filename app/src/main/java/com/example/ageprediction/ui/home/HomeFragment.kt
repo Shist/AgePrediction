@@ -2,15 +2,21 @@ package com.example.ageprediction.ui.home
 
 import android.app.SearchManager
 import android.content.Context
+import android.database.Cursor
+import android.net.Uri
 import android.os.Bundle
+import android.provider.SearchRecentSuggestions
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.example.ageprediction.Consts
 import com.example.ageprediction.R
+import com.example.ageprediction.SearchSuggestionProvider
 import com.example.ageprediction.databinding.FragmentHomeBinding
+import com.example.ageprediction.ui.home.adapter.SearchHistoryAdapter
 import com.example.ageprediction.ui.home.childrenFragments.HomeEmptyFragment
 import com.example.ageprediction.ui.home.childrenFragments.HomeNoResultFragment
 import com.example.ageprediction.ui.home.childrenFragments.HomeSuccessFragment
@@ -51,12 +57,16 @@ class HomeFragment : Fragment() {
             isIconifiedByDefault = false // Do not iconify the widget; expand it by default
         }
 
+        val adapter = SearchHistoryAdapter(requireContext(), null, true)
+        binding.searchLine.suggestionsAdapter = adapter
+
         binding.searchLine.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String): Boolean {
 
-                val queryString = binding.searchLine.query.toString()
-
+                val queryString = query.trim()
+                SearchRecentSuggestions(requireContext(), SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE)
+                    .saveRecentQuery(query, null)
                 if (queryString.isEmpty()) {
                     val fragment = HomeNoResultFragment().apply {
                         arguments = Bundle().apply {
@@ -106,9 +116,36 @@ class HomeFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                // We can do something while text is changing
+                val cursor = requireContext().contentResolver.query(
+                    Uri.parse("content://${SearchSuggestionProvider.AUTHORITY}/suggestions"),
+                    null,
+                    bundleOf(
+                        "query" to newText
+                    ),
+                    null,
+                )
+                adapter.changeCursor(cursor)
                 return false
             }
+        })
+
+        binding.searchLine.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
+
+            override fun onSuggestionSelect(position: Int): Boolean {
+                return false
+            }
+
+            override fun onSuggestionClick(position: Int): Boolean {
+                val cursor = adapter.getItem(position) as Cursor
+                val index = cursor.getColumnIndex("display1")
+                if (index < 0) {
+                    return false
+                }
+                val selection = cursor.getString(index)
+                binding.searchLine.setQuery(selection, true)
+                return true
+            }
+
         })
 
         childFragmentManager
