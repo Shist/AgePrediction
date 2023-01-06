@@ -1,19 +1,17 @@
 package com.example.ageprediction.ui.favorites.childrenFragments
 
-import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.Button
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.ageprediction.R
 import com.example.ageprediction.databinding.FragmentFavoritesListBinding
+import com.example.ageprediction.databinding.CustomDialogDeleteBinding
 import com.example.ageprediction.ui.favorites.childrenFragments.adapter.NameItem
 import com.example.ageprediction.ui.favorites.childrenFragments.adapter.NamesAdapter
 import kotlinx.coroutines.launch
@@ -63,16 +61,16 @@ class FavoritesListFragment : Fragment(), KoinComponent  {
                             adapter.submitList(mutableListNamesItems)
 
                             binding.btnDelete.setOnClickListener {
-                                val dialog = Dialog(requireContext())
-                                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-                                dialog.setCancelable(false)
-                                dialog.setContentView(R.layout.custom_dialog_delete)
-                                val noBtn = dialog.findViewById(R.id.btn_no) as Button
-                                val yesBtn = dialog.findViewById(R.id.btn_yes) as Button
-                                noBtn.setOnClickListener {
+                                val dialogBinding =
+                                    CustomDialogDeleteBinding.inflate(LayoutInflater.from(it.context), null, false)
+                                val dialog = AlertDialog.Builder(it.context)
+                                    .setCancelable(false)
+                                    .setView(dialogBinding.root)
+                                    .show()
+                                dialogBinding.btnNo.setOnClickListener {
                                     dialog.dismiss()
                                 }
-                                yesBtn.setOnClickListener {
+                                dialogBinding.btnYes.setOnClickListener {
                                     val namesItems = adapter.currentList
                                     val newListNamesItems = mutableListOf<NameItem>()
                                     val itemsToBeDeleted = mutableListOf<String>()
@@ -98,7 +96,6 @@ class FavoritesListFragment : Fragment(), KoinComponent  {
                                     hideButton()
                                     dialog.dismiss()
                                 }
-                                dialog.show()
                             }
                         } else {
                             binding.textEmptyList.visibility = View.VISIBLE

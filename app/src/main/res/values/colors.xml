@@ -12,4 +12,5 @@
     <color name="text_gray">#FF757893</color>
     <color name="btn_text_gray">#FF484848</color>
     <color name="dialog_delete_text">#FF2D3047</color>
+    <color name="dividers_color">#FFECECEC</color>
 </resources>
