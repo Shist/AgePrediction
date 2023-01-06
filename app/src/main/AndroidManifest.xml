@@ -36,6 +36,9 @@
         <provider android:name=".SearchSuggestionProvider"
             android:authorities="com.example.ageprediction.SearchSuggestionProvider"
             android:exported="false" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
     <uses-permission android:name="android.permission.INTERNET"/>
