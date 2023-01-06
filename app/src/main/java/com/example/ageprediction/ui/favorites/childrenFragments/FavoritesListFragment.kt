@@ -1,18 +1,17 @@
 package com.example.ageprediction.ui.favorites.childrenFragments
 
-import android.app.AlertDialog
-import android.content.Context
-import android.content.Intent
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.ageprediction.Consts
 import com.example.ageprediction.R
 import com.example.ageprediction.databinding.FragmentFavoritesListBinding
 import com.example.ageprediction.ui.favorites.childrenFragments.adapter.NameItem
@@ -64,37 +63,42 @@ class FavoritesListFragment : Fragment(), KoinComponent  {
                             adapter.submitList(mutableListNamesItems)
 
                             binding.btnDelete.setOnClickListener {
-                                AlertDialog.Builder(context).apply {
-                                    setTitle(getString(R.string.title_delete_name))
-                                    setMessage(getString(R.string.text_delete_name))
-                                    setPositiveButton(getString(R.string.text_yes)) { _, _ ->
-                                        val namesItems = adapter.currentList
-                                        val newListNamesItems = mutableListOf<NameItem>()
-                                        val itemsToBeDeleted = mutableListOf<String>()
+                                val dialog = Dialog(requireContext())
+                                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+                                dialog.setCancelable(false)
+                                dialog.setContentView(R.layout.custom_dialog_delete)
+                                val noBtn = dialog.findViewById(R.id.btn_no) as Button
+                                val yesBtn = dialog.findViewById(R.id.btn_yes) as Button
+                                noBtn.setOnClickListener {
+                                    dialog.dismiss()
+                                }
+                                yesBtn.setOnClickListener {
+                                    val namesItems = adapter.currentList
+                                    val newListNamesItems = mutableListOf<NameItem>()
+                                    val itemsToBeDeleted = mutableListOf<String>()
 
-                                        for (item in namesItems) {
-                                            if (item.checkBoxState) {
-                                                itemsToBeDeleted.add(item.textName)
-                                            } else {
-                                                newListNamesItems.add(item)
-                                            }
-                                        }
-
-                                        viewModel.deleteFavItemsFromDB(itemsToBeDeleted)
-
-                                        if (newListNamesItems.isEmpty()) {
-                                            binding.textEmptyList.visibility = View.VISIBLE
+                                    for (item in namesItems) {
+                                        if (item.checkBoxState) {
+                                            itemsToBeDeleted.add(item.textName)
                                         } else {
-                                            binding.textEmptyList.visibility = View.GONE
+                                            newListNamesItems.add(item)
                                         }
-
-                                        adapter.submitList(newListNamesItems)
-                                        adapter.currentAmountOfCheckedBoxes = 0
-                                        hideButton()
                                     }
-                                    setNegativeButton(getString(R.string.text_no)) { _, _ -> }
-                                    create()
-                                }.show()
+
+                                    viewModel.deleteFavItemsFromDB(itemsToBeDeleted)
+
+                                    if (newListNamesItems.isEmpty()) {
+                                        binding.textEmptyList.visibility = View.VISIBLE
+                                    } else {
+                                        binding.textEmptyList.visibility = View.GONE
+                                    }
+
+                                    adapter.submitList(newListNamesItems)
+                                    adapter.currentAmountOfCheckedBoxes = 0
+                                    hideButton()
+                                    dialog.dismiss()
+                                }
+                                dialog.show()
                             }
                         } else {
                             binding.textEmptyList.visibility = View.VISIBLE

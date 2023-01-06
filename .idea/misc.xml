@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/shist/AndroidStudioProjects/AgePrediction/app/src/main/res/drawable-anydpi/ic_share.xml" value="0.187" />
+        <entry key="..\:/Users/shist/AndroidStudioProjects/AgePrediction/app/src/main/res/drawable/delete_dialog_round_corners.xml" value="0.175" />
         <entry key="..\:/Users/shist/AndroidStudioProjects/AgePrediction/app/src/main/res/drawable/green_circle.xml" value="0.1955" />
         <entry key="..\:/Users/shist/AndroidStudioProjects/AgePrediction/app/src/main/res/drawable/ic_dashboard_black_24dp.xml" value="0.1495" />
         <entry key="..\:/Users/shist/AndroidStudioProjects/AgePrediction/app/src/main/res/drawable/ic_favorites_black_24dp.xml" value="0.1495" />
@@ -13,6 +14,7 @@
         <entry key="..\:/Users/shist/AndroidStudioProjects/AgePrediction/app/src/main/res/drawable/ic_share.xml" value="0.1955" />
         <entry key="..\:/Users/shist/AndroidStudioProjects/AgePrediction/app/src/main/res/drawable/round_corners.xml" value="0.177" />
         <entry key="..\:/Users/shist/AndroidStudioProjects/AgePrediction/app/src/main/res/layout/activity_main.xml" value="0.19199999334161955" />
+        <entry key="..\:/Users/shist/AndroidStudioProjects/AgePrediction/app/src/main/res/layout/custom_dialog_delete.xml" value="0.2879999900124293" />
         <entry key="..\:/Users/shist/AndroidStudioProjects/AgePrediction/app/src/main/res/layout/favorites_list_item.xml" value="0.22760416666666666" />
         <entry key="..\:/Users/shist/AndroidStudioProjects/AgePrediction/app/src/main/res/layout/fragment_dashboard.xml" value="0.24728260869565216" />
         <entry key="..\:/Users/shist/AndroidStudioProjects/AgePrediction/app/src/main/res/layout/fragment_favorites.xml" value="0.21818181061547676" />
